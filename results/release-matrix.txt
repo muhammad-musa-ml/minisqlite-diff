@@ -1,0 +1,35 @@
+Per-finding result on four SQLite releases against cursor/minisqlite at the pinned commit, measured 2026-10-29.
+Produced by: python scripts/release_matrix.py (reads findings/measured_*.json).
+3.50.0 is the release minisqlite reports through sqlite_version(); 3.40.1 is the SQLite the Debian base image ships.
+
+id    status   3.40.1   3.50.0   3.53.3   3.54.1
+F01  fixed   agrees   agrees   differs  differs
+F02  fixed   differs  differs  differs  differs
+F03  fixed   differs  differs  differs  differs
+F04  fixed   agrees   differs  differs  differs
+F05  fixed   agrees   differs  differs  differs
+F06  fixed   agrees   differs  differs  differs
+F07  fixed   differs  differs  differs  differs
+F08  fixed   agrees   differs  differs  differs
+F09  fixed   differs  differs  differs  differs
+F10  fixed   differs  differs  differs  differs
+F11  fixed   differs  differs  differs  differs
+O01  open    differs  differs  differs  differs
+O02  open    differs  differs  differs  differs
+O03  open    differs  differs  differs  differs
+O04  open    differs  differs  differs  differs
+O05  open    differs  differs  differs  differs
+O06  open    differs  differs  differs  differs
+O07  open    differs  differs  differs  differs
+O08  open    differs  differs  differs  differs
+O09  open    differs  differs  differs  differs
+O10  open    differs  differs  differs  differs
+O11  open    differs  differs  differs  differs
+O12  open    differs  differs  differs  differs
+O13  open    differs  differs  differs  differs
+O14  open    differs  differs  differs  differs
+O15  open    agrees   differs  differs  differs
+O16  open    differs  differs  differs  differs
+O17  open    differs  differs  differs  differs
+
+findings that differ from minisqlite, per release: 3.40.1: 22 of 28, 3.50.0: 27 of 28, 3.53.3: 28 of 28, 3.54.1: 28 of 28

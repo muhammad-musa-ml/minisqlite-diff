@@ -9,6 +9,7 @@
 # SQLite 3.52/3.53 documentation, and Python's bundled SQLite is older than that.
 #   docker build -t msqdiff:3541 .
 #   docker build -t msqdiff:3533 --build-arg SQLITE_NUM=3530300 --build-arg SQLITE_SHA3= .
+#   docker build -t msqdiff:3500 --build-arg SQLITE_YEAR=2025 --build-arg SQLITE_NUM=3500000 --build-arg SQLITE_SHA3= .
 ARG SQLITE_NUM=3540100
 ARG SQLITE_YEAR=2026
 # SHA3-256 of the amalgamation zip as printed on sqlite.org/download.html for 3.54.1.
