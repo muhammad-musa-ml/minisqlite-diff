@@ -74,7 +74,7 @@ def main() -> int:
     opened = [f for f in spec if f["status"] == "open"]
     w("# Findings")
     w("")
-    w(f"{len(spec)} minimal repros against `cursor/minisqlite` at commit `{PINNED}`, each replayed")
+    w(f"{len(spec)} short repros against `cursor/minisqlite` at commit `{PINNED}`, each replayed")
     w("with `python -m msqdiff check` on SQLite 3.54.1 and SQLite 3.53.3. A row is listed only when both")
     w("SQLite releases give the same answer and minisqlite gives a different one; the two releases agree")
     w(f"on all {len(spec)} (see `measured_3541.json` and `measured_3533.json`).")

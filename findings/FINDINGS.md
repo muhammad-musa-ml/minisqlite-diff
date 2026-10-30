@@ -1,6 +1,6 @@
 # Findings
 
-28 minimal repros against `cursor/minisqlite` at commit `4a5c1341fdde38beaf438e0241c9f45833c4b870`, each replayed
+28 short repros against `cursor/minisqlite` at commit `4a5c1341fdde38beaf438e0241c9f45833c4b870`, each replayed
 with `python -m msqdiff check` on SQLite 3.54.1 and SQLite 3.53.3. A row is listed only when both
 SQLite releases give the same answer and minisqlite gives a different one; the two releases agree
 on all 28 (see `measured_3541.json` and `measured_3533.json`).
