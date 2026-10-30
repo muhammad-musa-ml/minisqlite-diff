@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  differential:
+    name: harness, findings and corpus against SQLite ${{ matrix.sqlite }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 3.54.1: the hash is compared with the one printed on sqlite.org/download.html.
+          - sqlite: "3.54.1"
+            num: "3540100"
+            sha3: "92281c86e2957f9b9305890f9ac04204caa7b677cc868dc326d942689df28e30"
+          # 3.53.3: sqlite.org lists only the latest release, so the hash is printed, not compared.
+          - sqlite: "3.53.3"
+            num: "3530300"
+            sha3: ""
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch cursor/minisqlite at the pinned commit
+        run: python3 scripts/fetch_minisqlite.py
+      - name: Build the image
+        run: >
+          docker build -t msqdiff:ci
+          --build-arg SQLITE_NUM=${{ matrix.num }}
+          --build-arg SQLITE_SHA3=${{ matrix.sha3 }}
+          .
+      - name: SQLite version in the image
+        run: docker run --rm --entrypoint python msqdiff:ci -c "import sqlite3; print(sqlite3.sqlite_version)"
+      - name: Harness tests
+        run: docker run --rm --entrypoint python msqdiff:ci -X utf8 -B -W error::ResourceWarning -m unittest discover -s /app/tests -v
+      - name: Recorded findings still reproduce
+        run: docker run --rm msqdiff:ci check
+      - name: Corpus
+        run: docker run --rm msqdiff:ci corpus --no-columns --quiet
