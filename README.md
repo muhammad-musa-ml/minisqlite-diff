@@ -24,7 +24,7 @@ Measured on 2026-10-29 against cursor/minisqlite at commit `4a5c1341fdde38beaf43
 
 minisqlite's `sqlite_version()` reports 3.50.0, while a comment in its source cites a documentation change of 3.52.0, so the newer releases are measured as well as 3.50.0. Of the 58 corpus differences on 3.54.1, 56 appear against 3.53.3 too; the other two on each side are statements on which the two SQLite releases answer differently (`results/corpus-summary.txt`). The first 150 fuzz differences of each of the six shards were shrunk; 899 of those 900 cases still differed afterwards and fell into 789 distinct statement shapes (statements that differ only in their literals count once).
 
-[findings/FINDINGS.md](findings/FINDINGS.md) lists 28 minimal repros. Replayed on 3.54.1 and 3.53.3, all 28 differ from minisqlite; on 3.50.0, 27 do; on the Debian SQLite 3.40.1, 22 do (`results/release-matrix.txt`). The ones that depend on the release are the float-to-text case F01, which agrees with minisqlite on 3.40.1 and 3.50.0 and differs on 3.53.3 and 3.54.1, and F04, F05, F06, F08 and O15, which agree on 3.40.1 only. Six that differ on all four releases:
+[findings/FINDINGS.md](findings/FINDINGS.md) lists 28 short repros. Replayed on 3.54.1 and 3.53.3, all 28 differ from minisqlite; on 3.50.0, 27 do; on the Debian SQLite 3.40.1, 22 do (`results/release-matrix.txt`). The ones that depend on the release are the float-to-text case F01, which agrees with minisqlite on 3.40.1 and 3.50.0 and differs on 3.53.3 and 3.54.1, and F04, F05, F06, F08 and O15, which agree on 3.40.1 only. Six that differ on all four releases:
 
 | Statement | SQLite | minisqlite |
 |---|---|---|
