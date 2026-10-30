@@ -1,0 +1,14 @@
+Corpus of 956 statements (msqdiff/corpus.py), run on 2026-10-29 with `corpus --no-columns --quiet --out`
+on the same three images. Result files: out/corpus3_3541.json, corpus3_3533.json, corpus3_patched.json.
+Produced by: python scripts/compare_corpus.py out/corpus3_3541.json out/corpus3_3533.json out/corpus3_patched.json
+
+newer SQLite: 91 divergences {'rows': 39, 'error-text': 29, 'accept-reject': 19, 'error-code': 4}
+older SQLite: 91 divergences {'rows': 39, 'error-text': 29, 'accept-reject': 19, 'error-code': 4}
+patched runner: 73 divergences {'error-text': 29, 'accept-reject': 19, 'rows': 21, 'error-code': 4}
+in both SQLite releases: 89; only the newer: 2; only the older: 2
+  only the newer: const-0508 SELECT time('24:00:00')
+  only the newer: const-0524 SELECT datetime('2024-05-15 24:00')
+  only the older: const-0180 SELECT substr('hello',-9223372036854775807)
+  only the older: const-0455 SELECT printf('')
+in both, by category: {'accept-reject': 19, 'rows': 37, 'error-text': 29, 'error-code': 4}
+in both, behavioural (not error-text, error-code, columns): 56

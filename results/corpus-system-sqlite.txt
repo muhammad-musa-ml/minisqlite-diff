@@ -1,0 +1,101 @@
+The same 956-statement corpus run on 2026-10-29 against the SQLite that the Debian base image ships,
+by clearing the pinned build from the library path:
+  docker run --rm -e LD_LIBRARY_PATH= -v "$PWD/out:/out" msqdiff:3541 corpus --no-columns --quiet --out /out/corpus_system.json
+then compared with the 3.54.1 run by scripts/compare_corpus.py. In the comparison below "newer" is the pinned
+3.54.1 and "older" is the system build.
+
+system sqlite_version: 3.40.1
+sqlite 3.40.1 vs minisqlite | corpus cases: 956 | divergences: 118 | 0.7s
+  rows: 49
+  accept-reject: 36
+  error-text: 29
+  error-code: 4
+--- compare (newer = 3.54.1 pinned, older = system build)
+newer SQLite: 91 divergences {'rows': 39, 'error-text': 29, 'accept-reject': 19, 'error-code': 4}
+older SQLite: 118 divergences {'rows': 49, 'error-text': 29, 'accept-reject': 36, 'error-code': 4}
+in both SQLite releases: 63; only the newer: 28; only the older: 55
+  only the newer: const-0179 SELECT substr('hello',9223372036854775807)
+  only the newer: const-0181 SELECT substr('hello',1,9223372036854775807)
+  only the newer: const-0239 SELECT 1e15||''
+  only the newer: const-0243 SELECT 5e-324||''
+  only the newer: const-0246 SELECT CAST(1e15 AS TEXT)
+  only the newer: const-0247 SELECT CAST(1e16 AS TEXT)
+  only the newer: const-0321 SELECT log10(1000)
+  only the newer: const-0461 SELECT date('2023-02-29')
+  only the newer: const-0462 SELECT date('2024-02-30')
+  only the newer: const-0508 SELECT time('24:00:00')
+  only the newer: const-0524 SELECT datetime('2024-05-15 24:00')
+  only the newer: const-0631 SELECT json_extract('{"a":1}','a')
+  only the newer: const-0670 SELECT json_array(x'01')
+  only the newer: const-0683 SELECT json_array(1e15)
+  only the newer: const-0684 SELECT json_array(1e16)
+  only the newer: const-0755 SELECT jsonb('{"a":1}') IS NOT NULL
+  only the newer: const-0756 SELECT json(jsonb('{"a":[1,2]}'))
+  only the newer: const-0757 SELECT typeof(jsonb('{}'))
+  only the newer: const-0758 SELECT hex(jsonb('1'))
+  only the newer: const-0759 SELECT hex(jsonb('[]'))
+  only the newer: const-0760 SELECT hex(jsonb('{"a":1}'))
+  only the newer: const-0761 SELECT json_valid(jsonb('{}'),8)
+  only the newer: const-0762 SELECT jsonb_extract('{"a":1}','$.a')
+  only the newer: const-0763 SELECT typeof(jsonb_array(1))
+  only the newer: const-0764 SELECT hex(jsonb_array(1,2))
+  only the newer: const-0765 SELECT hex(jsonb_object('a',1))
+  only the newer: const-0766 SELECT json_extract(jsonb('{"a":1}'),'$.a')
+  only the newer: const-0767 SELECT jsonb_set('{"a":1}','$.a',2) IS NOT NULL
+  only the older: const-0207 SELECT unhex('4142')
+  only the older: const-0208 SELECT unhex('4g')
+  only the older: const-0209 SELECT unhex('414')
+  only the older: const-0210 SELECT unhex('41 42',' ')
+  only the older: const-0234 SELECT (0.1+0.2)||''
+  only the older: const-0244 SELECT 9223372036854775807.0||''
+  only the older: const-0284 SELECT round(1.005,2)
+  only the older: const-0285 SELECT round(2.675,2)
+  only the older: const-0371 SELECT iif(0,'y')
+  only the older: const-0373 SELECT iif(0,1,0,2,3)
+  only the older: const-0386 SELECT concat('a',NULL,1)
+  only the older: const-0387 SELECT concat()
+  only the older: const-0388 SELECT concat_ws(',','a',NULL,'b')
+  only the older: const-0389 SELECT concat_ws(NULL,'a','b')
+  only the older: const-0391 SELECT octet_length('?')
+  only the older: const-0392 SELECT octet_length(x'0102')
+  only the older: const-0393 SELECT octet_length(123)
+  only the older: const-0455 SELECT printf('')
+  only the older: const-0515 SELECT time('12:34:56.789','subsec')
+  only the older: const-0522 SELECT datetime('2024-05-15 12:34:56.789','subsec')
+  only the older: const-0528 SELECT datetime(1700000000.123,'unixepoch','subsec')
+  only the older: const-0545 SELECT unixepoch('2024-05-15 12:34:56.789','subsec')
+  only the older: const-0556 SELECT strftime('%u','2024-05-12')
+  only the older: const-0558 SELECT strftime('%U','2024-01-01')
+  only the older: const-0559 SELECT strftime('%V','2024-01-01')
+  only the older: const-0560 SELECT strftime('%G','2024-01-01')
+  only the older: const-0561 SELECT strftime('%g','2024-12-30')
+  only the older: const-0563 SELECT strftime('%e','2024-05-05')
+  only the older: const-0565 SELECT strftime('%I %p','2024-05-15 15:00:00')
+  only the older: const-0566 SELECT strftime('%l','2024-05-15 15:00:00')
+  only the older: const-0567 SELECT strftime('%k','2024-05-15 05:00:00')
+  only the older: const-0574 SELECT strftime('%R','2024-05-15 12:34:56')
+  only the older: const-0575 SELECT strftime('%T','2024-05-15 12:34:56')
+  only the older: const-0577 SELECT strftime('%F','2024-05-15')
+  only the older: const-0590 SELECT timediff('2024-05-15','2024-05-10')
+  only the older: const-0591 SELECT timediff('2024-05-10','2024-05-15')
+  only the older: const-0592 SELECT timediff('2024-05-15 12:00','2024-05-15 11:30')
+  only the older: const-0593 SELECT timediff('2025-03-01','2024-02-29')
+  only the older: const-0608 SELECT json('[NaN]')
+  only the older: const-0609 SELECT json('[0x10]')
+  only the older: const-0611 SELECT json('{a:1}')
+  only the older: const-0615 SELECT json_valid(NULL)
+  only the older: const-0619 SELECT json_valid('{"a":1}',1)
+  only the older: const-0620 SELECT json_valid('{"a":1}',2)
+  only the older: const-0621 SELECT json_valid('{"a":1}',4)
+  only the older: const-0622 SELECT json_valid('{"a":1}',8)
+  only the older: const-0661 SELECT '[1,2,3]' -> -1
+  only the older: const-0730 SELECT json_set('{"a":1}','$','x')
+  only the older: const-0749 SELECT json_pretty('{"a":[1,2],"b":{}}')
+  only the older: const-0750 SELECT json_pretty('[]')
+  only the older: const-0751 SELECT json_pretty('{"a":1}','  ')
+  only the older: const-0752 SELECT json_error_position('{"a":1')
+  only the older: const-0753 SELECT json_error_position('[1,]')
+  only the older: const-0754 SELECT json_error_position('{"a":1}')
+  only the older: table-0067 SELECT group_concat(b, ',' ORDER BY b DESC) FROM t
+in both, by category: {'error-code': 4, 'rows': 26, 'error-text': 28, 'accept-reject': 5}
+in both, behavioural (not error-text, error-code, columns): 31

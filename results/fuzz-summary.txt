@@ -1,0 +1,29 @@
+Fuzz seeds 0..29999 in 6 shards of 5000, run on 2026-10-29 with scripts/run_shards.ps1 on three images:
+  out/f3_3541    SQLite 3.54.1 against cursor/minisqlite at the pinned commit
+  out/f3_3533    SQLite 3.53.3 against the same minisqlite
+  out/f3_patched SQLite 3.54.1 against a local fix branch (not published)
+Produced by: python scripts/summarize_fuzz.py out/f3_3541 out/f3_3533 out/f3_patched
+
+out/f3_3541: 30000 seeds, 1162 behavioural divergences, 899 shrunk into 789 clusters
+    by category: rows 696, accept-reject 466
+    not counted (wording, ties): error-text 1414, error-code 104
+     319  other
+     169  date and time
+     116  REPLACE into NOT NULL with DEFAULT
+      94  GROUP BY / HAVING acceptance
+      91  real-to-text, 1e15 to 1e17
+out/f3_3533: 30000 seeds, 1162 behavioural divergences, 896 shrunk into 786 clusters
+    by category: rows 696, accept-reject 466
+    not counted (wording, ties): error-text 1414, error-code 104
+     319  other
+     166  date and time
+     116  REPLACE into NOT NULL with DEFAULT
+      94  GROUP BY / HAVING acceptance
+      91  real-to-text, 1e15 to 1e17
+out/f3_patched: 30000 seeds, 566 behavioural divergences, 566 shrunk into 545 clusters
+    by category: accept-reject 458, rows 108
+    not counted (wording, ties): error-text 1415, error-code 107
+     261  other
+     153  REPLACE into NOT NULL with DEFAULT
+     127  GROUP BY / HAVING acceptance
+       4  date and time
