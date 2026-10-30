@@ -1,0 +1,21 @@
+The same corpus on SQLite 3.50.0 (the release minisqlite's sqlite_version() reports), run on 2026-10-29
+with `corpus --no-columns --quiet --out`. In the comparison below "newer" is 3.54.1 and "older" is 3.50.0.
+Produced by: python scripts/compare_corpus.py out/corpus3_3541.json out/corpus_rel_3500.json
+
+newer SQLite: 91 divergences {'rows': 39, 'error-text': 29, 'accept-reject': 19, 'error-code': 4}
+older SQLite: 87 divergences {'rows': 35, 'error-text': 29, 'accept-reject': 19, 'error-code': 4}
+in both SQLite releases: 83; only the newer: 8; only the older: 4
+  only the newer: const-0239 SELECT 1e15||''
+  only the newer: const-0243 SELECT 5e-324||''
+  only the newer: const-0246 SELECT CAST(1e15 AS TEXT)
+  only the newer: const-0247 SELECT CAST(1e16 AS TEXT)
+  only the newer: const-0508 SELECT time('24:00:00')
+  only the newer: const-0524 SELECT datetime('2024-05-15 24:00')
+  only the newer: const-0683 SELECT json_array(1e15)
+  only the newer: const-0684 SELECT json_array(1e16)
+  only the older: const-0180 SELECT substr('hello',-9223372036854775807)
+  only the older: const-0234 SELECT (0.1+0.2)||''
+  only the older: const-0244 SELECT 9223372036854775807.0||''
+  only the older: const-0455 SELECT printf('')
+in both, by category: {'error-text': 29, 'rows': 31, 'error-code': 4, 'accept-reject': 19}
+in both, behavioural (not error-text, error-code, columns): 50

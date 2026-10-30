@@ -8,6 +8,8 @@ Inputs:
     findings/measured_3541.json    `check --out` against SQLite 3.54.1, pinned minisqlite
     findings/measured_3533.json    `check --out` against SQLite 3.53.3, pinned minisqlite
     findings/measured_patched.json `check --out --patched` against SQLite 3.54.1, local fix
+    findings/measured_3500.json    `check --out` against SQLite 3.50.0 (the release minisqlite reports)
+    findings/measured_3401.json    `check --out` against SQLite 3.40.1 (the Debian library, pinned build removed)
 
 Every answer printed in FINDINGS.md is copied from those files; nothing is typed by hand.
 """
@@ -62,6 +64,9 @@ def main() -> int:
     m41 = by_id(load("measured_3541.json"), "measured_3541.json", ids)
     m33 = by_id(load("measured_3533.json"), "measured_3533.json", ids)
     mpa = by_id(load("measured_patched.json"), "measured_patched.json", ids)
+    m35 = by_id(load("measured_3500.json"), "measured_3500.json", ids)
+    m34 = by_id(load("measured_3401.json"), "measured_3401.json", ids)
+    older = (("3.50.0", m35), ("3.40.1", m34))
 
     out: list[str] = []
     w = out.append
@@ -74,6 +79,14 @@ def main() -> int:
     w("SQLite releases give the same answer and minisqlite gives a different one; the two releases agree")
     w(f"on all {len(spec)} (see `measured_3541.json` and `measured_3533.json`).")
     w("")
+    n35 = sum(1 for f in spec if m35[f["id"]]["reproduces"])
+    n34 = sum(1 for f in spec if m34[f["id"]]["reproduces"])
+    w("SQLite changes between releases, and minisqlite's `sqlite_version()` reports 3.50.0 while a comment in its")
+    w("source cites a documentation change of 3.52.0, so the same repros were also run on SQLite 3.50.0 and on")
+    w(f"the SQLite 3.40.1 that the Debian base image ships. {n35} of {len(spec)} differ on 3.50.0 and {n34} of {len(spec)} on 3.40.1;")
+    w("the table says which, and each finding below shows the answer of an older release when it is not the")
+    w("answer of 3.54.1. The 3.50.0 and 3.40.1 columns are recorded measurements and are not rerun in CI.")
+    w("")
     w(f"- **fixed** ({len(fixed)}): the difference is gone on a local fix branch, with regression tests. That branch is not published (the upstream repository has no licence).")
     w(f"- **open** ({len(opened)}): the difference is still there and nothing was changed for it.")
     w("")
@@ -82,10 +95,11 @@ def main() -> int:
     w("findings: SQLite documents column names as unspecified, and minisqlite's own source says it does not")
     w("match error text. Error messages are shown below only to make a repro readable.")
     w("")
-    w("| id | status | kind | what differs |")
-    w("|---|---|---|---|")
+    w("| id | status | kind | differs on 3.40.1 / 3.50.0 / 3.53.3 / 3.54.1 | what differs |")
+    w("|---|---|---|---|---|")
     for f in spec:
-        w(f"| {f['id']} | {f['status']} | {KIND.get(f['kind'], f['kind'])} | {f['title'].replace('|', '/')} |")
+        yn = " / ".join("yes" if d[f["id"]]["reproduces"] else "no" for d in (m34, m35, m33, m41))
+        w(f"| {f['id']} | {f['status']} | {KIND.get(f['kind'], f['kind'])} | {yn} | {f['title'].replace('|', '/')} |")
     w("")
     for f in spec:
         i = f["id"]
@@ -101,6 +115,10 @@ def main() -> int:
             sys.exit(f"{i}: SQLite 3.54.1 and 3.53.3 answers differ; this finding needs a version note")
         w(f"- SQLite 3.54.1 and 3.53.3: {code(ascii_only(m41[i]['sqlite_answer']))}")
         w(f"- minisqlite at `{PINNED[:7]}`: {code(ascii_only(m41[i]['minisqlite_answer']))}")
+        for rel, d in older:
+            if d[i]["sqlite_answer"] != m41[i]["sqlite_answer"]:
+                same = "the same as minisqlite" if not d[i]["reproduces"] else "different from minisqlite"
+                w(f"- SQLite {rel} answers differently: {code(ascii_only(d[i]['sqlite_answer']))} ({same})")
         if f["status"] == "fixed":
             w(f"- minisqlite with the local fix: {code(ascii_only(mpa[i]['minisqlite_answer']))}")
         if f.get("where"):
