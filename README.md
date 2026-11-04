@@ -2,7 +2,7 @@
 
 This project runs the same SQL on [cursor/minisqlite](https://github.com/cursor/minisqlite) and on SQLite, and reports where the answers differ. It has a fixed corpus of 956 statements, a seeded random generator, a shrinker that cuts a differing statement down to a few tokens, and a command that replays 28 recorded findings.
 
-It is an independent project. It is not affiliated with Cursor, and Cursor has not reviewed it. It was written with Claude Code, an AI coding assistant, and every number below comes from running the commands in this repository.
+It is an independent project. It is not affiliated with Cursor, and Cursor has not reviewed it. Every number below comes from running the commands in this repository.
 
 ## Why
 
